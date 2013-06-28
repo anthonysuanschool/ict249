@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Hello World Simple</title>
+	
+		<script src="cordova.js"></script>
+		<script>
+		
+			function onLoad(){
+				document.addEventListener("deviceready", onDeviceReady, true);
+			}
+
+			function onDeviceReady(){ 
+				navigator.notification.alert("I am working working!");
+			}
+		
+		</script>
+  </head>
+
+  <body onload="onLoad();">
+
+	<h1>Hello World Simple</h1>
+    <h2>tada!</h2>
+	
+  </body>
+</html>
