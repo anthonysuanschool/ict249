@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<script src="jquery.mobile-1.3.1.min.js"></script>
+		<title>Facebook</title> 
 		
-		 <!--<script src="http://localhost:8080/target/target-script-min.js#anonymous"></script>-->
+		
+		<meta name="viewport" content="width=device-width, initial-scale=1"> 
+		
+	
         <div id="fb-root"></div>
         <!--phonegap -->
 		<script type="text/javascript" src="cordova.js"></script>
@@ -14,13 +17,10 @@
 		<!--facebookjssdk -->
 		<script src="facebook_js_sdk.js"></script>
 		
+        <link rel="stylesheet" href="jquery.mobile-1.2.1.min.css" />
+		<script src="jquery-1.8.3.min.js"></script>
+		<script src="jquery.mobile-1.2.1.min.js"></script>
 		
-		<script src="jquery-2.0.2.js"></script>
-		<script src="jquery.mobile-1.2.1.js"></script>
-		
-		
-		<link rel="stylesheet"  href="jquery.mobile-1.2.1.css" /> 
-        
 		<script>
 		
     
@@ -127,6 +127,13 @@
 	<body>
 	
 
+<div data-role="page">
+
+	<div data-role="header">
+		<h1>Facebook Friends Plugin</h1>
+	</div><!-- /header -->
+
+	<div data-role="content">	
 		<div data-role="controlgroup">
 			<a href="#" data-role="button" onclick="login()">Login</a>
 			<a href="#" data-role="button" onclick="friends()">Friends</a>
@@ -137,7 +144,13 @@
 
         <div id="data">loading ...</div>
         
+		<ul data-role="listview" id="friends">
+		
+		</ul>
        
-        <div id="log"></div>
+        <div id="log"></div>	
+	</div><!-- /content -->
+
+</div><!-- /page -->
 	</body>
 </html>
