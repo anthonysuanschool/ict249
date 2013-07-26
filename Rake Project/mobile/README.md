@@ -5,4 +5,5 @@ ICT 249 MSUIIT - RAKE Project
 
 By: Anthony Silvano A. Suan
 
-Web Server Files
+Mobile Application Files
+
