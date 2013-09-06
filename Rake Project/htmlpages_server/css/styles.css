@@ -25,11 +25,12 @@ body {
 	margin:0px;
 }
 
-#wrapper {
+#wrapper-full {
 	
 	width:100%;
 	height:100%;	
 	padding-bottom:50px;
+	display:none;
 }
 
 #sidebar {
@@ -221,4 +222,63 @@ body {
 #content-main {
 	width:auto;
 	padding:10px;
+}
+
+#wrapper-small {
+	position:absolute;
+	top:10%;
+	left:40%;
+	background: none repeat scroll 0 0 rgba(0, 0, 0, 0.1);
+	box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1) inset;
+	border-radius: 4px 4px 4px 4px;
+	padding:8px;
+}
+
+#login-content {
+	background-color: #FFFFFF;
+    border-radius: 2px 2px 2px 2px;
+    box-shadow: 1px 1px rgba(0, 0, 0, 0.1), -1px 1px rgba(0, 0, 0, 0.1), 0 0 1px 1px rgba(0, 0, 0, 0.1);
+	padding:30px;
+}
+
+#login-logo {
+	margin:auto;
+	margin-bottom:20px;
+	text-align:center;
+}
+
+#login-form {
+	text-align:center;
+}
+
+#login-form input[type=text], #login-form input[type=password] {
+	padding:8px;
+	border-radius:5px;
+	border:1px solid #afbcc8;
+	box-shadow:1px 1px 3px #ccc;
+	width:80%;
+	margin:auto;
+	color:#4f4f4f;
+	margin-bottom:20px;
+}
+
+#login-form input[type=submit] {
+	background: #0f8787; /* Old browsers */
+	background: -moz-linear-gradient(top,  #0f8787 0%, #90b1b1 50%, #92b9b9 51%, #97dddd 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#0f8787), color-stop(50%,#90b1b1), color-stop(51%,#92b9b9), color-stop(100%,#97dddd)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  #0f8787 0%,#90b1b1 50%,#92b9b9 51%,#97dddd 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #0f8787 0%,#90b1b1 50%,#92b9b9 51%,#97dddd 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #0f8787 0%,#90b1b1 50%,#92b9b9 51%,#97dddd 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  #0f8787 0%,#90b1b1 50%,#92b9b9 51%,#97dddd 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#0f8787', endColorstr='#97dddd',GradientType=0 ); /* IE6-9 */
+	padding:5px;
+	padding-left:20px;
+	padding-right:20px;
+	border:none;
+	box-shadow:1px 1px 3px #ccc;
+	border-radius:10px;
+	border:1px solid #afbcc8;
+	cursor:pointer;
+	color:#fff;
+	font-weight:bold;
 }
