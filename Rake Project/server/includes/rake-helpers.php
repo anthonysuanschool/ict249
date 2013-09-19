@@ -10,6 +10,10 @@ class RakeHelpers {
 		return substr($result, 0, (strlen($result) - 2));
 	}
 	
+	function passwordEncrypt($string) {
+		return md5($string);
+	}
+	
 	public function phpToMySQLDate($date_value) {
 		return $mysqldate = date( 'Y-m-d H:i:s', $date_value );
 	}
@@ -93,6 +97,14 @@ class RakeHelpers {
 		return $password;
 	}
 
+	function email($to, $subject, $message) {	
+		$send_mail = false;
+		//Ssend_mail = mail($to, $subject, $message);
+		if($send_mail)
+			return true;
+		else
+			return false;
+	}
 
 }
 

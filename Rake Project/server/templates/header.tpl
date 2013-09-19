@@ -5,6 +5,17 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<title>Rake</title>
 	<link rel="stylesheet" href="css/styles.css" />
+	
+	<script src="js/jquery.js"></script>
+	<script src="js/jquery.alert.js"></script>
+	<script src="js/jquery.session.js"></script>
+	
+	<script src="js/rake.js"></script>
+	<script src="js/rake-login.js"></script>
+	<script src="js/rake-register.js"></script>
+	<script src="js/rake-forget.js"></script>
+	<script src="js/rake-content.js"></script>
+	
 </head>
 
 <body>

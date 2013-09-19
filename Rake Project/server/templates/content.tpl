@@ -1,5 +1,6 @@
-<?php
-
-require_once('login-page.php');
-
-require_once('user-page.php');
+{{template=header.tpl}}
+{{template=forget-page.tpl}}
+{{template=register-page.tpl}}
+{{template=login-page.tpl}}
+{{template=content-page.tpl}}
+{{template=footer.tpl}}
