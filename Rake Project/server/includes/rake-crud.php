@@ -15,6 +15,13 @@ class RakeCRUD {
 		$results = $this->rakedb->get_results($sql);	
 		return $results;
 	}
+	
+	public function _getDataRegEx($table_name, $field_name, $ordered, $regex) {
+		$sql = "SELECT ".$field_name." FROM ".$table_name." WHERE scraper_nicename REGEXP ".$regex." order by ".$ordered." ASC;";
+		$results = $this->rakedb->get_results($sql);	
+		return $results;
+	}
+	
 	public function _getSpecificData($table_name, $field_name, $ordered) {
 		$sql = "select ".$field_name." from ".$table_name." order by ".$ordered." ASC;";
 		$results = $this->rakedb->get_results($sql);	

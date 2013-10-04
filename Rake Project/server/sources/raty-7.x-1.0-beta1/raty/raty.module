@@ -1,0 +1,246 @@
+<?php
+
+/**
+ * @file
+ *
+ * Raty - basic API functions and hook implementations.
+ */
+
+define('DEFAULT_STARS', 5);
+
+/**
+ * Implements hook_libraries_info().
+ * @note : Libraries 2.x
+ */
+function raty_libraries_info() {
+  $libraries['raty'] = array(
+    'name' => 'jQuery Raty (A Star Rating Plugin)',
+    'vendor url' => 'http://wbotelhos.com/raty/',
+    'download url' => 'http://github.com/wbotelhos/raty/archive/2.5.2.zip',
+    'version arguments' => array(
+      'file' => 'README.md',
+      'pattern' => '@version\s+([0-9a-zA-Z\.-]+)@',
+      'lines' => 8
+    ),
+    'path' => 'lib',
+    'files' => array(
+      'js' => array(
+        'jquery.raty.js'
+      ),
+    ),
+    'variants' => array(
+      'minified' => array(
+        'files' => array(
+          'js' => array(
+            'jquery.raty.min.js',
+          ),
+        ),
+      ),
+    ),
+  );
+
+  return $libraries;
+}
+
+/**
+ * Load the Raty jQuery library.
+ *
+ * @return string
+ *   Path to Raty library.
+ */
+function raty_load_js($type = 'output') {
+  $module_path = drupal_get_path('module', 'raty');
+
+  switch ($type) {
+    case 'output':
+      static $raty_path_loaded;
+      if (!isset($raty_path_loaded)) {
+        $raty_js = $module_path . '/js/raty.js';
+        drupal_add_js($raty_js);
+        // Try bundled with module.
+        if (file_exists($module_path . '/raty/lib/jquery.raty.min.js')) {
+          drupal_add_js($module_path . '/raty/lib/jquery.raty.min.js');
+          $raty_path = $module_path . '/raty/lib';
+          $raty_path_loaded = $raty_path;
+          return $raty_path;
+        }
+
+        // Try libraries module.
+        if (module_exists('libraries')) {
+          if ($library = libraries_load('raty')) {
+            $raty_path = $library['library path'] . '/' . $library['path'];
+            $raty_path_loaded = $raty_path;
+            return $raty_path;
+          }
+        }
+
+      }
+      else {
+        return FALSE;
+      }
+
+      break;
+
+    case 'input':
+      static $raty_input_loaded;
+      if (!isset($raty_input_loaded)) {
+        $raty_js = $module_path . '/js/raty_input.js';
+        drupal_add_js($raty_js);
+        // Try bundled with module.
+        if (file_exists($module_path . '/raty/lib/jquery.raty.min.js')) {
+          drupal_add_js($module_path . '/raty/lib/jquery.raty.min.js');
+          $raty_path = $module_path . '/raty/lib';
+          $raty_input_loaded = $raty_path;
+          return $raty_path;
+        }
+
+        // Try libraries module.
+        if (module_exists('libraries')) {
+          if ($library = libraries_load('raty')) {
+            $raty_path = $library['library path'] . '/' . $library['path'];
+            $raty_input_loaded = $raty_path;
+            return $raty_path;
+          }
+        }
+
+      }
+      else {
+        return FALSE;
+      }
+
+      break;
+  }
+
+  // Hmm.
+  drupal_set_message(t('Problem loading the jQuery Raty library.
+    Download and extract to modules/raty/raty or sites/all/libraries/raty'),
+    'error', FALSE);
+
+}
+
+/**
+ * Implements hook_field_formatter_info().
+ */
+function raty_field_formatter_info() {
+  return array(
+    'raty_rating_formatter' => array(
+      'label' => t('Raty Star rating'),
+      'field types' => array('number_integer', 'number_decimal', 'number_float', 'list_number'),
+      'settings' => array(
+        'star_count' => DEFAULT_STARS,
+        'remove_empty' => 0,
+        'icon_image' => 'default',
+      ),
+    ),
+  );
+}
+
+/**
+ * Implements hook_field_formatter_settings_form().
+ */
+function raty_field_formatter_settings_form($field, $instance, $view_mode, $form, &$form_state) {
+  $display = $instance['display'][$view_mode];
+  $settings = $display['settings'];
+
+  $element = array();
+
+  $element['star_count'] = array(
+    '#type' => 'select',
+    '#title' => t('Number of stars'),
+    '#default_value' => $settings['star_count'],
+    '#options' => array(1 => 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20),
+  );
+
+  $element['remove_empty'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Remove empty stars'),
+    '#description' => t('Note this can overrule the "Number of stars" setting.'),
+    '#default_value' => $settings['remove_empty'],
+  );
+  // @TODO: Add more options to settings.  Custom images can be used!
+
+  return $element;
+}
+
+/**
+ * Implements hook_field_formatter_settings_summary().
+ */
+function raty_field_formatter_settings_summary($field, $instance, $view_mode) {
+  $display = $instance['display'][$view_mode];
+  $settings = $display['settings'];
+
+  $min = 0;
+  $max = (isset($settings['star_count']) ?
+    $settings['star_count'] : DEFAULT_STARS);
+  $value = $max - 1;
+
+  if ($settings['remove_empty']) {
+    $max = $value;
+  }
+
+  // Include the Raty library.
+  $raty_path = raty_load_js('output');
+  if (!empty($raty_path)) {
+    $raty_settings = array('raty_path' => $raty_path);
+    drupal_add_js(array('raty' => $raty_settings), 'setting');
+  }
+
+  $summary = raty_field_formatter_generate_output($value, $min, $max,
+    $settings);
+
+  return $summary;
+}
+
+/**
+ * Implements hook_field_formatter_view().
+ */
+function raty_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
+  $settings = $display['settings'];
+  $element = array();
+
+  $min = 0;
+  $max = (isset($settings['star_count']) ?
+    $settings['star_count'] : DEFAULT_STARS);
+
+  foreach ($items as $delta => $item) {
+    $value = empty($item['value']) ? 0 : $item['value'];
+    if ($settings['remove_empty']) {
+      $max = $value;
+    }
+    $output = raty_field_formatter_generate_output($value, $min, $max, $settings);
+    $element[$delta] = array('#markup' => $output);
+  }
+
+  // Include the Raty library.
+  $raty_path = raty_load_js('output');
+  if (!empty($raty_path)) {
+    $raty_settings = array('raty_path' => $raty_path);
+    drupal_add_js(array('raty' => $raty_settings), 'setting');
+  }
+
+  return $element;
+}
+
+/**
+ * Generate Raty star widget HTML.
+ *
+ * @param integer $value
+ *   Star rating value.
+ * @param integer $min
+ *   Minimum number of stars to show.
+ * @param integer $max
+ *   Maximum number of stars to show.
+ * @param array $settings
+ *   Settings gathered during widget config.
+ *
+ * @return string
+ *   HTML output for Raty widget.
+ */
+function raty_field_formatter_generate_output($value = 0, $min = 0, $max = DEFAULT_STARS, $settings = array()) {
+  // Will use other variables later for more features.
+  $output = '<div class="raty-star" data-score="' . $value . '" ';
+  $output .= 'data-number="' . $max . '">';
+  $output .= '</div>';
+
+  return $output;
+}

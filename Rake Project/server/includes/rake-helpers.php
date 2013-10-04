@@ -99,7 +99,7 @@ class RakeHelpers {
 
 	function email($to, $subject, $message) {	
 		$send_mail = false;
-		//Ssend_mail = mail($to, $subject, $message);
+		$send_mail = mail($to, $subject, $message);
 		if($send_mail)
 			return true;
 		else

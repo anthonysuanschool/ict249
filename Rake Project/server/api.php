@@ -2,7 +2,10 @@
 
 require_once('bootstrap.php');
 
+
 require_once('api/user-service.php');
+require_once('api/scraper-service.php');
+
 require_once('api/rake-api.php');
 
 $ra = new RakeAPI();

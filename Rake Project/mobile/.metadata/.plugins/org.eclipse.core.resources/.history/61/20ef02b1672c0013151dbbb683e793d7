@@ -1,0 +1,530 @@
+
+
+
+$(document).on( 'pageinit', function(){  
+	
+	$(".ui-input-search .ui-input-text").keyup(function(){
+		var keyword = $(".ui-input-search .ui-input-text").val();
+		
+		
+		var request = '{"Service":"Scraper","Method":"search","Parameters":{"keyword": "'+keyword+'"}}';
+		$.post( api_url, {"data": request}, function( response ) {
+			console.log( response.Status );
+			console.log( response.Result ); 
+					
+			if(response.Status) {
+				$('.search_data').html("");
+				var counter = 0;
+				$.each(response.Result, function (index) {
+				    $('.search_data').append('<li><a  class="search_result" id="search_result_' + index + '">' + response.Result[index] + '</a></li>').listview('refresh');
+					counter++;
+					if(counter == 4)
+						return false;
+				});
+			} 
+			$('.search_data').append('<li><a  class="search_result" id="search_result_' + 0 + '">Search all containing "' + keyword + '"</a></li>').listview('refresh');
+		}, "json");
+		
+		
+	});
+	
+	
+	$(".add_scraper").click(function(){
+		$.mobile.changePage("#scraper_new", "slide");
+	});
+	
+	$(".logout").click(function(){
+		$.session.remove('rakeuser');
+		$.mobile.changePage("#login", "fade");
+	})
+	
+	$(".back_dashboard").click(function(){
+		scrapeList();
+		$.mobile.changePage("#dashboard", "slidefade");
+	});
+
+	$('#scraper-settings-form .dialog_delete').click(function(){
+		$.mobile.loading( 'show');
+		var request = '{"Service":"Scraper","Method":"delete","Parameters":{"scraper_id": "'+$.session.get('rakescraper')+'"}}';
+		$.post( api_url, {"data": request}, function( response7 ) {
+			console.log( response7.Status );
+			console.log( response7.Result ); 
+			scrapeList();
+			$.mobile.loading( 'hide');
+			$.mobile.changePage("#dashboard", "slidefade");
+		}, "json");
+		
+	});
+	
+	$('#dashboard .account').click(function(){
+		$.mobile.changePage("#account", "slidefade");
+	});
+	
+	
+	$('#account .dashboard').click(function(){
+		$.mobile.changePage("#dashboard", "slidefade");
+	});
+	
+	$('#account .submit').click(function(){
+		
+		var password = $('#account .password').val();
+		var rpassword = $('#account .rpassword').val();
+		
+		if(rpassword == password && password != "") {
+		
+			$.mobile.loading( 'show');
+			var request = '{"Service":"User","Method":"changePassword","Parameters":{"user_id": "'+$.session.get('rakeuser')+'", "password":"'+password+'"}}';
+			$.post( api_url, {"data": request}, function( response7 ) {
+				console.log( response7.Status );
+				console.log( response7.Result ); 
+
+				$.mobile.loading( 'hide');
+
+			}, "json");
+		} else {
+			$("#account-popup").html("Password Mismatch!");
+			$("#account-popup" ).popup( "open" );
+		}
+		
+	});
+	
+});
+
+
+
+	
+	
+ $(document).ready(function(){  
+ 
+	
+	
+	
+	$('.jqte-text').jqte();
+	
+	var source_code = CodeMirror.fromTextArea(document.getElementById("code"),{
+        lineNumbers: true,
+        mode: "text/html",
+        lineWrapping: true
+    });
+	
+	/*
+	var global_search_pattern = CodeMirror.fromTextArea(document.getElementById("global_search_pattern"),{
+        lineNumbers: true,
+        mode: "text/html",
+        lineWrapping: true
+    });
+	
+	var item_search_pattern = CodeMirror.fromTextArea(document.getElementById("item_search_pattern"),{
+        lineNumbers: true,
+        mode: "text/html",
+        lineWrapping: true
+    });
+	
+	var output_template = CodeMirror.fromTextArea(document.getElementById("output_template"),{
+        lineNumbers: true,
+        mode: "text/html",
+        lineWrapping: true
+    });
+	*/
+	
+	$('#add-scraper-form .submit').click(function(){
+		var name = $('#add-scraper-form .name').val();
+		var url = $('#add-scraper-form .url').val();
+		var encoding = $('#add-scraper-form .encoding').val();
+		var rakeuser = $.session.get('rakeuser');
+
+		var request = '{"Service":"Scraper","Method":"create","Parameters":{"author": "'+rakeuser+'", "url": "'+url+'", "encoding": "'+encoding+'", "nice_name": "'+name+'"}}';
+		$.mobile.loading( 'show');
+		$.post( api_url, {"data": request}, function( response ) {
+			console.log( response.Status );
+			console.log( response.Result ); 
+					
+			if(response.Status) {
+				
+				$.session.set('rakescraper', response.Result.scraper_id);
+				var scraper_id = response.Result.scraper_id;
+				
+						$("#scraper_settings .scraper_name").html(response.Result.scraper_nicename);
+						
+						$("#scraper_settings .name").val(response.Result.scraper_nicename);
+						$("#scraper_settings .url").val(response.Result.scraper_url);
+						$("#scraper_settings .encoding").val(response.Result.scraper_encoding);
+						
+						
+						$("#scraper_settings #code").val(response.Result.source);
+						source_code.setValue(response.Result.source);
+						source_code.save();
+						source_code.refresh();
+						
+						$("#scraper_settings .description").val(response.Result.scraper_description);
+						$("#scraper_settings .description").jqteVal(response.Result.scraper_description);
+						
+						$("#scraper_settings .thumbnail_url").val(response.Result.scraper_thumbnail_url);
+						
+						$("#scraper_settings #global_search_pattern").val(response.Result.scraper_global_search_pattern);						
+						//global_search_pattern.setValue(response.Result.scraper_global_search_pattern);
+						//global_search_pattern.save();
+						//global_search_pattern.refresh();
+						
+						$("#scraper_settings #item_search_pattern").val(response.Result.scraper_item_search_pattern);
+						//item_search_pattern.setValue(response.Result.scraper_item_search_pattern);
+						//item_search_pattern.save();
+						//item_search_pattern.refresh();
+						
+						$("#scraper_settings #output_template").val(response.Result.scraper_output_template);
+						//output_template.setValue(response.Result.scraper_output_template);
+						//output_template.save();
+						//output_template.refresh();
+				
+				$.mobile.changePage("#scraper_settings", "slidefade");
+				
+			} else {
+				var message = response.Error;
+				$("#add-scraper-popup").html(message);
+				$( "#add-scraper-popup" ).popup( "open" )
+			}
+			
+			$.mobile.loading( 'hide');
+		}, "json");
+		
+		
+	});
+	
+	
+	
+	$('#scraper-settings-form .submit').click(function(){
+	
+		var form_name = $("#scraper_settings .name").val();
+		var form_url = $("#scraper_settings .url").val();
+		var form_encoding = $("#scraper_settings .encoding").val();
+		
+		var form_code = source_code.getValue();
+		
+		var form_description = $("#scraper_settings .description").val();
+
+		var form_thumbnail = $("#scraper_settings .thumbnail_url").val();
+		
+		//var form_global_search_pattern = global_search_pattern.getValue();
+		//var form_item_search_pattern = item_search_pattern.getValue();
+		//var form_output_template = output_template.getValue();
+		
+		var form_global_search_pattern = $("#scraper_settings #global_search_pattern").val();
+		var form_item_search_pattern = $("#scraper_settings #item_search_pattern").val();
+		var form_output_template = $("#scraper_settings #output_template").val();
+		
+		var request = '{"Service":"Scraper","Method":"setScraper","Parameters":{"id": "'+$.session.get('rakescraper')+'", "key": "scraper_nicename", "value": "'+form_name+'"}}';
+		$.mobile.loading( 'show');
+		$.post( api_url, {"data": request}, function( response ) {
+			console.log( response.Status );
+			console.log( response.Result ); 
+		}, "json");
+		
+		var request = '{"Service":"Scraper","Method":"setScraper","Parameters":{"id": "'+$.session.get('rakescraper')+'", "key": "scraper_url", "value": "'+form_url+'"}}';
+		$.post( api_url, {"data": request}, function( response2 ) {
+			console.log( response2.Status );
+			console.log( response2.Result ); 
+		}, "json");
+		
+		var request = '{"Service":"Scraper","Method":"setScraper","Parameters":{"id": "'+$.session.get('rakescraper')+'", "key": "scraper_encoding", "value": "'+form_encoding+'"}}';
+		$.post( api_url, {"data": request}, function( response3 ) {
+			console.log( response3.Status );
+			console.log( response3.Result ); 
+		}, "json");
+		
+		form_description = form_description.replace(/(\r\n|\n|\r)/gm,"");
+		var request = '{"Service":"Scraper","Method":"setScraper","Parameters":{"id": "'+$.session.get('rakescraper')+'", "key": "scraper_description", "value": "'+form_description+'"}}';
+		$.post( api_url, {"data": request}, function( response4 ) {
+			console.log( response4.Status );
+			console.log( response4.Result ); 
+		}, "json");
+		var request = '{"Service":"Scraper","Method":"setScraper","Parameters":{"id": "'+$.session.get('rakescraper')+'", "key": "scraper_thumbnail_url", "value": "'+form_thumbnail+'"}}';
+		$.post( api_url, {"data": request}, function( response5 ) {
+			console.log( response5.Status );
+			console.log( response5.Result ); 
+		}, "json");
+		
+		form_global_search_pattern = form_global_search_pattern.replace(/(\r\n|\n|\r)/gm,"");
+		var request = '{"Service":"Scraper","Method":"setScraper","Parameters":{"id": "'+$.session.get('rakescraper')+'", "key": "scraper_global_search_pattern", "value": "'+form_global_search_pattern+'"}}';
+		$.post( api_url, {"data": request}, function( response6 ) {
+			console.log( response6.Status );
+			console.log( response6.Result ); 
+		}, "json");
+		
+		form_item_search_pattern = form_item_search_pattern.replace(/(\r\n|\n|\r)/gm,"");
+		var request = '{"Service":"Scraper","Method":"setScraper","Parameters":{"id": "'+$.session.get('rakescraper')+'", "key": "scraper_item_search_pattern", "value": "'+form_item_search_pattern+'"}}';
+		$.post( api_url, {"data": request}, function( response7 ) {
+			console.log( response7.Status );
+			console.log( response7.Result ); 
+		}, "json");
+		
+		form_output_template = form_output_template.replace(/(\r\n|\n|\r)/gm,"");		
+		var request = '{"Service":"Scraper","Method":"setScraper","Parameters":{"id": "'+$.session.get('rakescraper')+'", "key": "scraper_output_template", "value": "'+form_output_template+'"}}';
+		$.post( api_url, {"data": request}, function( response8 ) {
+			console.log( response8.Status );
+			console.log( response8.Result ); 
+			$.mobile.loading( 'hide');
+		}, "json");
+		
+		
+	});
+	
+	
+	
+
+	$('.scraper_information_rate_select').change(function() {
+		var new_value = $(this).val();
+		var request = '{"Service":"Scraper","Method":"setRating","Parameters":{"scraper_id": "'+$.session.get('rakescraper')+'", "user_id": "'+$.session.get('rakeuser')+'", "rating": "'+new_value+'"}}';
+		$.post( api_url, {"data": request}, function( response ) {
+			console.log( response.Status );
+			console.log( response.Result ); 
+		}, "json");
+	});
+	
+	$('.scraper_information_subscribe_select').change(function() {
+		var new_value = $(this).val();
+		if(new_value == 0) {
+			var request = '{"Service":"Scraper","Method":"removeUser","Parameters":{"scraper_id": "'+$.session.get('rakescraper')+'", "user_id": "'+$.session.get('rakeuser')+'"}}';
+			$.post( api_url, {"data": request}, function( response ) {
+				console.log( response.Status );
+				console.log( response.Result ); 
+			}, "json");
+		} else {
+			var request = '{"Service":"Scraper","Method":"addUser","Parameters":{"scraper_id": "'+$.session.get('rakescraper')+'", "user_id": "'+$.session.get('rakeuser')+'"}}';
+			$.post( api_url, {"data": request}, function( response ) {
+				console.log( response.Status );
+				console.log( response.Result ); 
+			}, "json");
+		}
+	});
+
+	$('#scraper_settings .preview').click(function() {
+		$.mobile.loading( 'show');
+		$('#scraper_preview .scraper_preview_result').html("");
+		
+		
+		
+		var request = '{"Service":"Scraper","Method":"getGlobalInformation","Parameters":{"id": "'+$.session.get('rakescraper')+'"}}';
+		$.post( api_url, {"data": request}, function( response1 ) {
+			console.log( response1.Status );
+			console.log( response1.Result );
+			$('#scraper_preview .scraper_preview_result').append(response1.Result);
+				
+			var request = '{"Service":"Scraper","Method":"getItemInformation","Parameters":{"id": "'+$.session.get('rakescraper')+'"}}';
+			$.post( api_url, {"data": request}, function( response2 ) {
+				console.log( response2.Status );
+				console.log( response2.Result );
+				$('#scraper_preview .scraper_preview_result').append(response2.Result);
+				$.mobile.loading( 'hide');
+				$.mobile.changePage("#scraper_preview", "slidefade");
+				
+				
+				var request = '{"Service":"Scraper","Method":"getScraper","Parameters":{"id": "'+$.session.get('rakescraper')+'"}}';
+				$.post( api_url, {"data": request}, function( response3 ) {
+					$("#scraper_preview .scraper_name").html(response3.Result.scraper_nicename);
+					$.mobile.loading( 'hide');
+				}, "json");		
+				
+			}, "json");
+						
+						
+		}, "json");	
+	});
+	
+
+	$('#scraper_information .preview2').click(function() {
+		$.mobile.loading( 'show');
+		$('#scraper_preview2 .scraper_preview_result').html("");
+		
+		
+		
+		var request = '{"Service":"Scraper","Method":"getGlobalInformation","Parameters":{"id": "'+$.session.get('rakescraper')+'"}}';
+		$.post( api_url, {"data": request}, function( response1 ) {
+			console.log( response1.Status );
+			console.log( response1.Result );
+			$('#scraper_preview2 .scraper_preview_result').append(response1.Result);
+				
+			var request = '{"Service":"Scraper","Method":"getItemInformation","Parameters":{"id": "'+$.session.get('rakescraper')+'"}}';
+			$.post( api_url, {"data": request}, function( response2 ) {
+				console.log( response2.Status );
+				console.log( response2.Result );
+				$('#scraper_preview2 .scraper_preview_result').append(response2.Result);
+				$.mobile.loading( 'hide');
+				$.mobile.changePage("#scraper_preview2", "slidefade");
+				
+				
+				var request = '{"Service":"Scraper","Method":"getScraper","Parameters":{"id": "'+$.session.get('rakescraper')+'"}}';
+				$.post( api_url, {"data": request}, function( response3 ) {
+					$("#scraper_preview2 .scraper_name").html(response3.Result.scraper_nicename);
+					$.mobile.loading( 'hide');
+				}, "json");		
+				
+			}, "json");
+						
+						
+		}, "json");	
+	});
+	
+	$('#scraper_preview .settings').click(function() {
+		var request = '{"Service":"Scraper","Method":"getScraper","Parameters":{"id": "'+$.session.get('rakescraper')+'"}}';
+		$.mobile.loading( 'show');
+		$.post( api_url, {"data": request}, function( response ) {
+			console.log( response.Status );
+			console.log( response.Result ); 
+					
+			if(response.Status) {
+				
+				$.session.set('rakescraper', response.Result.scraper_id);
+				var scraper_id = response.Result.scraper_id;
+				
+						$("#scraper_settings .scraper_name").html(response.Result.scraper_nicename);
+						
+						$("#scraper_settings .name").val(response.Result.scraper_nicename);
+						$("#scraper_settings .url").val(response.Result.scraper_url);
+						$("#scraper_settings .encoding").val(response.Result.scraper_encoding);
+						
+						
+						$("#scraper_settings #code").val(response.Result.source);
+						source_code.setValue(response.Result.source);
+						source_code.save();
+						source_code.refresh();
+						
+						$("#scraper_settings .description").val(response.Result.scraper_description);
+						$("#scraper_settings .description").jqteVal(response.Result.scraper_description);
+						
+						$("#scraper_settings .thumbnail_url").val(response.Result.scraper_thumbnail_url);
+						
+						$("#scraper_settings #global_search_pattern").val(response.Result.scraper_global_search_pattern);						
+						//global_search_pattern.setValue(response.Result.scraper_global_search_pattern);
+						////global_search_pattern.save();
+						//global_search_pattern.refresh();
+						
+						$("#scraper_settings #item_search_pattern").val(response.Result.scraper_item_search_pattern);
+						//item_search_pattern.setValue(response.Result.scraper_item_search_pattern);
+						//item_search_pattern.save();
+						//item_search_pattern.refresh();
+						
+						$("#scraper_settings #output_template").val(response.Result.scraper_output_template);
+						//output_template.setValue(response.Result.scraper_output_template);
+						//output_template.save();
+						//output_template.refresh();
+				
+				$.mobile.changePage("#scraper_settings", "slidefade");
+				
+			} else {
+				var message = response.Error;
+				$("#add-scraper-popup").html(message);
+				$( "#add-scraper-popup" ).popup( "open" )
+			}
+			
+			$.mobile.loading( 'hide');
+		}, "json");
+	});
+	
+	$('#scraper_preview2 .information').click(function() {
+		gotoScrape();
+	});
+	
+	
+	
+	 $(document).on('click', '.search_result', function(){  
+	var id_str = $(this).attr("id");
+	var id_array = id_str.split("_");
+	var scraper_id = id_array[2];
+	$.session.set('rakescraper', scraper_id);	
+	gotoScrape();
+});
+
+
+$(document).on('click', '.scraper_list .scraper_item', function() {
+
+    var id_str = $(this).attr("id");
+	var id_arr = id_str.split("_");
+	var scraper_id = id_arr[2];		
+	$.session.set('rakescraper', scraper_id);		
+							
+	gotoScrape();		
+});
+	
+ });
+ 
+ 
+
+
+
+function gotoScrape() {
+	var user_id = $.session.get('rakeuser');
+	var scrape_id = $.session.get('rakescraper');
+	
+	$('#scraper_information .star_rate').html('');
+	
+	if(scrape_id == 0) {
+		
+	} else {
+		var request = '{"Service":"Scraper","Method":"getScraper","Parameters":{"id": "'+$.session.get('rakescraper')+'"}}';
+		$.mobile.loading( 'show');
+		$.post( api_url, {"data": request}, function( response ) {
+			console.log( response.Status );
+			console.log( response.Result ); 
+			if(response.Status) {
+				if(user_id == response.Result.scraper_author) {
+				
+					$('#scraper_preview .scraper_preview_result').html("");
+			
+					var request = '{"Service":"Scraper","Method":"getGlobalInformation","Parameters":{"id": "'+$.session.get('rakescraper')+'"}}';
+					$.post( api_url, {"data": request}, function( response1 ) {
+						console.log( response1.Status );
+						console.log( response1.Result );
+						$('#scraper_preview .scraper_preview_result').append(response1.Result);
+				
+						var request = '{"Service":"Scraper","Method":"getItemInformation","Parameters":{"id": "'+$.session.get('rakescraper')+'"}}';
+						$.post( api_url, {"data": request}, function( response2 ) {
+							console.log( response2.Status );
+							console.log( response2.Result );
+							$('#scraper_preview .scraper_preview_result').append(response2.Result);
+							$.mobile.loading( 'hide');
+							$.mobile.changePage("#scraper_preview", "slidefade");
+						}, "json");
+						
+						
+					}, "json");					
+					
+					
+					
+				} else {					
+					
+					$("#scraper_information .scraper_name").html(response.Result.scraper_nicename);
+					$("#scraper_information .scraper_information_name").html(response.Result.scraper_nicename);
+					$("#scraper_information .scraper_information_url").html(response.Result.scraper_url);
+					$("#scraper_information .scraper_information_author").html(response.Result.scraper_author_name);
+					$("#scraper_information .scraper_information_description").html(response.Result.scraper_description);
+					
+					var request = '{"Service":"Scraper","Method":"getScraperByUserAndScraper","Parameters":{"user_id": "'+$.session.get('rakeuser')+'", "scraper_id": "'+$.session.get('rakescraper')+'"}}';
+						$.post( api_url, {"data": request}, function( response2 ) {
+						console.log( response2.Status );
+						console.log( response2.Result ); 
+						if(response2.Status) {
+							
+							var score_int = parseInt(response2.Result.scraper_user_rating);									
+							
+							$('.scraper_information_rate_select').val(score_int).slider("refresh");
+							$('.scraper_information_subscribe_select').val(1).slider("refresh");
+							
+						} else {
+							
+							$('.scraper_information_subscribe_select').val(0).slider("refresh");
+							
+						}
+						
+					}, "json");
+		
+					
+					
+					$.mobile.changePage("#scraper_information", "slidefade");
+					
+				}
+			}
+			
+		}, "json");
+		
+	}
+}

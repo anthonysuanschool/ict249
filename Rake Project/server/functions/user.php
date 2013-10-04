@@ -7,7 +7,7 @@ class User {
 	private $user_meta_table;
 	private $rake_helpers;
 	
-	private $id;
+	private $Id;
 	private $last_error_msg;
 	
 	public function __construct($id = 0) {
@@ -44,8 +44,10 @@ class User {
 	public function create($email, $password) {
 	
 		
-		if($this->emailAlreadyTaken($email))
+		if($this->emailAlreadyTaken($email)) {
+			$this->Id = 0;
 			$this->last_error_msg = "User email already exist.";
+		}
 		else {
 		
 			if($password == null || $password == "")

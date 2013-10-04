@@ -67,6 +67,27 @@ class UserService {
 		return json_encode($data);
 	}
 	
+	function changePassword($param) {
+		$error_msg = "none";
+		
+		$this->user->setId($param->user_id);
+		
+		if($this->user->getPassword()) {
+			$this->user->changePassword($param->password);
+			$status = true;
+		} else {
+			$status = false;
+			$error_msg =$this->user->getLastErrorMsg();
+		}
+		
+		$data = array(
+			"Status" => $status,
+			"Result" => "",
+			"Error" => $error_msg
+		);		
+		return json_encode($data);
+	}
+	
 	
 	
 }

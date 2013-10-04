@@ -1,0 +1,116 @@
+
+html, body {
+    background:url(../images/bg.jpg) no-repeat;
+	background-size:100%;
+}
+
+#splash {
+	background:url(../images/splash-bg.jpg) no-repeat;
+	background-size:100%;
+}
+
+#splash .splash {
+	background:url(../images/tonlabs-logo-medium.png) no-repeat;
+	width:250px;
+	height:69px;
+	margin:auto;
+	margin-top:40%;
+	padding-top:90px;
+	text-align:center;
+}
+
+#login .logo, #register .logo, #forgot-password .logo {
+	margin:auto;
+	text-align:center;
+	margin-top:50px;
+}
+
+#login .logo img, #register .logo img, #forgot-password .logo img{
+	width:200px;
+}
+
+.label_small {
+	color: #0f8787;
+    font-size: 11px !important;
+}
+
+.popup {
+	padding:10px;
+	color: #888888;
+    font-size: 11px !important;
+}
+
+.ui-body-a, .ui-overlay-a {
+	background:none !important;
+}
+
+.preview_container, .group-div, .scraper_information {
+	background:url(../images/group.png);
+	border-radius:10px;
+	padding:20px;
+	border:1px solid #0f8787;
+}
+
+.scraper_information_name {
+	font-size:20px;
+	margin:0px;
+	color:#000;
+	background:#249D9D;
+	margin-left:-20px;
+	margin-right:-20px;
+	padding-left:20px;
+	margin-top:-20px;
+	border-top-left-radius:8px; 
+	border-top-right-radius:8px;
+	padding-top:10px;
+	padding-bottom:10px;
+	
+}
+
+.scraper_information_url {
+	font-size:14px; 
+	margin:0px;
+	margin-bottom:20px;
+	border-bottom:1px solid #249D9D;
+	margin-left:-20px;
+	margin-right:-20px;
+	padding-left:20px;
+}
+
+.scraper_information_author {
+	font-size:12px; 
+	margin:0px;
+	background:#ccc;
+	padding:5px;
+	border-top-left-radius:5px;
+	border-top-right-radius:5px;
+	box-shadow:1px 1px 5px #ccc;
+}
+
+.scraper_information_description {
+	font-size:12px;
+	background:#fff;
+	padding:10px;
+	border:1px solid #888;
+	border-radius:3px;
+	box-shadow:1px 1px 5px #ccc;
+	margin-bottom:10px;
+}
+
+.ui-slider-switch { width: 16em !important;}
+
+
+
+.preview_container {
+	margin-bottom:20px;
+}
+
+.item_preview_container {
+	border-bottom:1px solid #ccc;
+	padding:10px;
+}
+
+#code {
+	height:20px;
+}
+

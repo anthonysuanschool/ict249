@@ -1,0 +1,40 @@
+
+html, body {
+    height : 100%;
+}
+
+#splash {
+	background:url(../images/splash-bg.jpg) no-repeat;
+	background-size:100%;
+}
+
+#splash .splash {
+	background:url(../images/tonlabs-logo-medium.png) no-repeat;
+	width:250px;
+	height:69px;
+	margin:auto;
+	margin-top:40%;
+	padding-top:90px;
+	text-align:center;
+}
+
+#login .logo, #register .logo, #forgot-password .logo {
+	margin:auto;
+	text-align:center;
+	margin-top:50px;
+}
+
+.label_small {
+	color: #888888;
+    font-size: 11px !important;
+}
+
+.popup {
+	padding:10px;
+	color: #888888;
+    font-size: 11px !important;
+}
+
+.ui-body-a, .ui-overlay-a {
+	background:none !important;
+}
